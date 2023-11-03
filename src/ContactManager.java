@@ -20,7 +20,7 @@ public class ContactManager {
         // Format and print the contact list with equal width columns
         String format = "| %-13s | %-12s |%n";
         System.out.printf(format, "Name", "Phone Number");
-        System.out.println("--------------------------------");
+        System.out.println("|---------------|--------------|");
         for (String contact : contactList) {
             String[] parts = contact.split(" \\| ");
             if (parts.length == 2) {
@@ -52,7 +52,35 @@ public class ContactManager {
     }
 
     public void removeContact() throws IOException {
+        try {
+            List<String> contactList = Files.readAllLines(file);
+            String format = "| %-13s | %-12s |%n";
+            System.out.printf(format, "Name", "Phone Number");
+            System.out.println("|---------------|--------------|");
+            for (String contact : contactList) {
+                String[] parts = contact.split("\\s*\\|\\s*");
+                String name = parts[0].trim();
+                String phoneNumber = parts[1].trim();
+                System.out.printf(format, name, phoneNumber);
+            }
 
+            System.out.print("Enter the contact's name to remove: ");
+            String contactToKill = in.getLine();
+            List<String> updatedContactList = new ArrayList<>();
+            for (String contact : contactList) {
+                String[] parts = contact.split("\\s*\\|\\s*");
+                String name = parts[0].trim();
+                if (name.equalsIgnoreCase(contactToKill)) {
+                    System.out.println("Contact removed successfully!");
+                    continue;
+                }
+                updatedContactList.add(contact);
+            }
+
+            Files.write(file, updatedContactList);
+        } catch (IOException e) {
+            System.out.println("Error occurred while removing contact: " + e.getMessage());
+        }
     }
 
     public void searchByName() {
