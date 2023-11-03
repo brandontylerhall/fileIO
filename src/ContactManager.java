@@ -18,7 +18,7 @@ public class ContactManager {
     }
 
     public void quitFlag() {
-        boolean quit = true;
+        quit = true;
     }
 
     public boolean quit() {
