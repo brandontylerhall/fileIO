@@ -10,17 +10,22 @@ import java.util.List;
 
 public class ContactManager {
     FileManager fileManager = new FileManager();
-    public Path directory = fileManager.getDataDirectory();
     public Path file = fileManager.getDataFile();
     Input in = new Input();
     boolean quit = false;
 
     public void showContacts() throws IOException {
         List<String> contactList = Files.readAllLines(file);
+
+        // Format and print the contact list with equal width columns
+        String format = "| %-13s | %-12s |%n";
+        System.out.printf(format, "Name", "Phone Number");
+        System.out.println("--------------------------------");
         for (String contact : contactList) {
-            System.out.printf("Name | Phone Number %n" +
-                    "-------------------%n" +
-                    "| %s |%n", contact);
+            String[] parts = contact.split(" \\| ");
+            if (parts.length == 2) {
+                System.out.printf(format, parts[0], parts[1]);
+            }
         }
     }
 
