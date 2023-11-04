@@ -36,7 +36,7 @@ public class ContactManager {
 
             System.out.print("Enter the contact's phone number: ");
             String newContactNumber = in.getLine();
-
+            /*formatting to make numbers (xxx) xxx-xxxx*/
             String formattedNumber = newContactNumber.replaceFirst("(\\d{3})(\\d{3})(\\d+)", "$1-$2-$3");
 
             Files.write(
@@ -54,9 +54,13 @@ public class ContactManager {
     public void removeContact() throws IOException {
         try {
             List<String> contactList = Files.readAllLines(file);
+
+            /*formatting code*/
             String format = "| %-13s | %-12s |%n";
             System.out.printf(format, "Name", "Phone Number");
             System.out.println("|---------------|--------------|");
+
+            /*removes the delimiter of | in the .txt and formats the names/numbers*/
             for (String contact : contactList) {
                 String[] parts = contact.split("\\s*\\|\\s*");
                 String name = parts[0].trim();
@@ -66,6 +70,8 @@ public class ContactManager {
 
             System.out.print("Enter the contact's name to remove: ");
             String contactToKill = in.getLine();
+
+            /*creates new, empty list of contacts and adds back every contact minus the one you removed*/
             List<String> updatedContactList = new ArrayList<>();
             for (String contact : contactList) {
                 String[] parts = contact.split("\\s*\\|\\s*");
@@ -83,8 +89,43 @@ public class ContactManager {
         }
     }
 
-    public void searchByName() {
+    public void searchByName() throws IOException {
+        List<String> contactList = Files.readAllLines(file);
+        List<String> listOfSearchedContacts = new ArrayList<>();
 
+        System.out.print("What is the name of the contact you wish to search: ");
+        String contactToFind = in.getLine().trim();
+
+        /*splits name into first and last name pieces*/
+        for (String contact : contactList) {
+            String[] parts = contact.split("\\s*\\|\\s*");
+            String name = parts[0].trim();
+            String[] nameParts = name.split("\\s+");
+
+            // Compare search input with both first and last name parts
+            for (String namePart : nameParts) {
+                if (namePart.equalsIgnoreCase(contactToFind)) {
+                    listOfSearchedContacts.add(contact);
+                    break;
+                }
+            }
+        }
+
+        /*print the search results*/
+        if (listOfSearchedContacts.isEmpty()) {
+            System.out.println("There's nobody around here that has that name, pardner.");
+        } else {
+            System.out.println("Search results:");
+            String format = "| %-13s | %-12s |%n";
+            System.out.printf(format, "Name", "Phone Number");
+            System.out.println("|---------------|--------------|");
+            for (String result : listOfSearchedContacts) {
+                String[] parts = result.split("\\s*\\|\\s*");
+                String name = parts[0].trim();
+                String phoneNumber = parts[1].trim();
+                System.out.printf(format, name, phoneNumber);
+            }
+        }
     }
 
     public void quitFlag() {
